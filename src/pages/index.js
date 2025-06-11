@@ -8,13 +8,24 @@ import Services from "@/components/Services";
 import Footer from "@/components/Footer";
 import WhyChooseUs from "@/components/WhoChooseus";
 
-export default function Home() {
+export async function getServerSideProps() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/products`);
+  const products = await res.json();
+  console.log('Fetched products get:', products);
+
+  return {
+    props: { products },
+  };
+}
+
+export default function Home({products}) {
   return (
     <div>
-      <Navbar />
+          <Navbar products={products} />
       <Hero />
       <Features />
-      <TopProduct />
+      <TopProduct products={products}  />
       <WhyChooseUs />
       <Reviews />
       <Brands />

@@ -1,26 +1,12 @@
-import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useCart } from '../../context/CartContext'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import toast from 'react-hot-toast'
 
-export default function ProductDetail() {
-  const router = useRouter()
-  const { id } = router.query
-  const [product, setProduct] = useState(null)
+export default function ProductDetail({ product }) {
   const [quantity, setQuantity] = useState(1)
   const { cartItems, addToCart, removeFromCart } = useCart()
-
-  useEffect(() => {
-    if (!id) return
-    const fetchProduct = async () => {
-      const res = await fetch(`https://fakestoreapi.com/products/${id}`)
-      const data = await res.json()
-      setProduct(data)
-    }
-    fetchProduct()
-  }, [id])
 
   const handleAdd = () => {
     for (let i = 0; i < quantity; i++) {
@@ -35,8 +21,6 @@ export default function ProductDetail() {
   }
 
   const inCart = cartItems.find(item => item.id === product?.id)
-
-  if (!product) return <div className="container mx-auto p-4">Loading...</div>
 
   return (
     <>
@@ -96,4 +80,24 @@ export default function ProductDetail() {
       <Footer />
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const { id } = context.params
+
+  try {
+    const res = await fetch(`https://fakestoreapi.com/products/${id}`)
+    if (!res.ok) throw new Error('Failed to fetch')
+    const product = await res.json()
+
+    return {
+      props: {
+        product,
+      },
+    }
+  } catch (err) {
+    return {
+      notFound: true,
+    }
+  }
 }

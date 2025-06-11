@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -6,18 +5,21 @@ import qualitylogo from "../../public/images/QualityLogo.png";
 import { FiUser, FiShoppingCart, FiEye } from "react-icons/fi";
 import { useCart } from "@/context/CartContext"; 
 
-export default function Navbar() {
-  const [products, setProducts] = useState([]);
+export default function Navbar({ products = [] }) {
+  console.log('Navbar products:', products);
+
+  // const [products, setProducts] = useState([]);
   const { cartItems } = useCart()
 const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0)
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0); 
 
-  useEffect(() => {
-    fetch("https://fakestoreapi.com/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data.slice(0, 10)));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://fakestoreapi.com/products")
+  //     .then((res) => res.json())
+  //     .then((data) => setProducts(data.slice(0, 10)));
+  // }, []);
+  
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -83,8 +85,8 @@ const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0)
               className="cursor-pointer hover:text-yellow-300"
               title={product.title}
             >
-              {product.title.length > 8
-                ? product.title.slice(0, 8)
+              {product.title.length > 4
+                ? product.title.slice(0, 4)
                 : product.title}
             </Link>
           ))}

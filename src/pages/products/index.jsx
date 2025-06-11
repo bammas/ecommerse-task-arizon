@@ -3,14 +3,23 @@ import ProductCard from '@/components/ProductCard'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 
-export default function ProductListing() {
-  const [products, setProducts] = useState([])
+export async function getServerSideProps() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const res = await fetch(`${baseUrl}/api/products`);
+  const products = await res.json();
 
-  useEffect(() => {
-    fetch('https://fakestoreapi.com/products')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-  }, [])
+  return {
+    props: { products },
+  };
+}
+
+export default function ProductListing({products}) {
+
+  // useEffect(() => {
+  //   fetch('https://fakestoreapi.com/products')
+  //     .then(res => res.json())
+  //     .then(data => setProducts(data))
+  // }, [])
 
   return (
     <>
